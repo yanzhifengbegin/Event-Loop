@@ -1,18 +1,38 @@
-# 了解 SVG
+# SVG 介绍
 
-## 概念
+## 什么是 SVG？
 
 > 可缩放矢量图形（Scalable Vector Graphics，SVG），是一种用于描述二维的**矢量图形**，基于 XML 的标记语言。作为一个基于文本的开放网络标准，SVG 能够**优雅而简洁**地渲染不同大小的图形，**并和 CSS，DOM，JavaScript 和 SMIL 等其他网络标准无缝衔接**。本质上，SVG 相对于图像，就好比 HTML 相对于文本。
 
 ## 优点
 
--   矢量图形：它的图像能够被无限放大而不失真或降低质量，并且可以方便地修改内容。
--   优雅而简洁：有些用 html 语言描述相对复杂的结构，svg 相对简单且没有牺牲可读性
--   无缝衔接前端开发三剑客。1. 嵌入 html 2. css 样式控制 3. js 逻辑控制
+-   矢量图形 图像在放大或改变尺寸的情况下其图形质量不会有所损失。（位图与矢量图的定义）
+-   使用 XML 格式纯文本定义图形, 文本编辑器即可用来创建和修改。与 JPEG 和 GIF 图像比起来，尺寸更小。
+-   开放的标准。在 2003 年一月，SVG 1.1 被确立为 W3C 标准。
 
-## 常用元素和样式
+## 缺点：
 
-### 元素
+-   SVG 复杂度高会减慢渲染速度
+
+## 兼容性
+
+IE8-以及 Android2.3 默认浏览器是不支持 SVG。
+
+## 用法
+
+-   将 SVG 作为图像。将 svg 文件作为 img 标签的 src 属性值或者 background-image 的值。
+-   将 SVG 作为应用程序。使用 object / embed 元素将 SVG 嵌入 HTML 文档中，object 元素的 type 属性表示要嵌入的文档类型，对用 SVG 应该是 type="image/svg+xml"。
+-   使用内联 SVG,直接在 HTML 中嵌入 SVG
+
+## 坐标系统
+
+-   视口
+    视口是指文档打算使用的画布区域。在 svg 元素上使用 width 和 height 属性确定视口的大小，属性值可以仅仅是为数字也可以为带单位的数字(单位可以为 em、ex、px、pt、pc、cm、mm 和 in)也可以为百分比。
+
+-   默认用户坐标
+    SVG 阅读器会设置一个坐标系统，即原点(0,0)位于视口的左上角，x 向右递增，y 向下递增。这个坐标系统是一个纯粹的几何系统，点没有大小，网格线被认为是无限细。
+
+## 基本形状
 
 -   circle
 -   rect
@@ -20,153 +40,118 @@
 -   polygon
 -   polyline
 -   line
--   path
 -   text
--   defs
--   use
--   animateTransform
--   animate
+-   path 路径 基本形状都是 path 的简写形式，path 元素更通用，可以通过制定一系列相互连接的线、弧、曲线来绘制任意形状的轮廓，这些轮廓也可以填充或者绘制轮廓线，也可以用来定义裁剪区域或蒙版。 <path d="Ma Ll Vv Hh Aa Qq Tt Cc Ss" />
 
-```html
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
-        <style>
-            .loader-container {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                padding: 5%;
-            }
+## 文档结构
 
-            .loader {
-                position: relative;
-                margin: 0px auto;
-                width: 100px; /* SET SIZE OF SPINNER HERE */
-            }
+### 结构和表现
 
-            .loader:before {
-                content: '';
-                display: block;
-                padding-top: 100%;
-            }
+| 表现方式   | 说明                                                                                                                               |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| 内联样式   | 元素内部使用 style 属性                                                                                                            |
+| 内部样式表 | 内部样式定义在 defs 元素内部                                                                                                       |
+| 外部样式表 | 与 html 类似，将样式定义在 css 文件中，使用选择器来设置相应的元素样式                                                              |
+| 表现属性   | SVG 允许以属性的形式指定表现样式，但是表现属性的优先级最低，如果以其他三种形式指定了相同的样式属性，则将覆盖通过表现属性指定的样式 |
 
-            .circular {
-                -webkit-animation: rotate 2s linear infinite;
-                animation: rotate 2s linear infinite;
-                height: 100%;
-                -webkit-transform-origin: center center;
-                transform-origin: center center;
-                width: 100%;
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                margin: auto;
-            }
+### 分组和引用
 
-            .path {
-                stroke-dasharray: 1, 200;
-                stroke-dashoffset: 0;
-                -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-                animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-                stroke-linecap: round;
-            }
+-   defs: 用来定义复用的元素，但是定义在 defs 内的元素并不会被显示，而是作为模板供其他地方使用。
+-   use: 元素用来复用图形中重复出现的元素，需要为 use 标签的 xlink:href 指定 URI 来引用指定的图形元素
+-   g: 用来将其子元素作为一个组合，可以使文档结构更清晰
+-   symbol: 与 g 元素不同，symbol 永远不会被显示，也可以用来指定被后续使用的元素
+-   image: 可以用来包含一个完整的 SVG 或栅格文件。
 
-            @-webkit-keyframes rotate {
-                100% {
-                    -webkit-transform: rotate(360deg);
-                    transform: rotate(360deg);
-                }
-            }
+## 渐变
 
-            @keyframes rotate {
-                100% {
-                    -webkit-transform: rotate(360deg);
-                    transform: rotate(360deg);
-                }
-            }
+-   线性渐变
+    ```
+    <defs>
+        <linearGradient id="linear">
+            <stop offset="0%" style="stop-color:#ffcc00;"></stop>
+            <stop offset="100%" style="stop-color:#0099cc;"></stop>
+        </linearGradient>
+        </defs>
+        <rect x="20" y="20" width="200" height="100" style="fill:url(#linear);stroke:black;"></rect>
+    ```
+-   径向渐变
 
-            @-webkit-keyframes dash {
-                0% {
-                    stroke-dasharray: 1, 200;
-                    stroke-dashoffset: 0;
-                }
-                50% {
-                    stroke-dasharray: 89, 200;
-                    stroke-dashoffset: -35px;
-                }
-                100% {
-                    stroke-dasharray: 89, 200;
-                    stroke-dashoffset: -124px;
-                }
-            }
+    ```
+    <defs>
+        <radialGradient id="radial" cx="50%" cy="50%" >
+            <stop offset="0%" style="stop-color:#f00;"></stop>
+            <stop offset="50%" style="stop-color:#0f0;"></stop>
+            <stop offset="100%" style="stop-color:#00f;"></stop>
+        </radialGradient>
+    </defs>
+    <rect x="20" y="20" width="200" height="200" style="fill:url(#radial);stroke:black;"></rect>
+    ```
 
-            @keyframes dash {
-                0% {
-                    stroke-dasharray: 1, 200;
-                    stroke-dashoffset: 0;
-                }
-                50% {
-                    stroke-dasharray: 89, 200;
-                    stroke-dashoffset: -35px;
-                }
-                100% {
-                    stroke-dasharray: 89, 200;
-                    stroke-dashoffset: -124px;
-                }
-            }
+## 动画
 
-            @-webkit-keyframes color {
-                100%,
-                0% {
-                    stroke: #d62d20;
-                }
-                40% {
-                    stroke: #0057e7;
-                }
-                66% {
-                    stroke: #008744;
-                }
-                80%,
-                90% {
-                    stroke: #ffa700;
-                }
-            }
+-   基础动画元素 animate
 
-            @keyframes color {
-                100%,
-                0% {
-                    stroke: #d62d20;
-                }
-                40% {
-                    stroke: #0057e7;
-                }
-                66% {
-                    stroke: #008744;
-                }
-                80%,
-                90% {
-                    stroke: #ffa700;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="loader-container">
-            <div class="loader">
-                <svg class="circular" viewBox="25 25 50 50">
-                    <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"></circle>
-                </svg>
-            </div>
-        </div>
-    </body>
-</html>
-```
+    ```
+        <rect x="10" y="10" width="200" height="200" stroke="black" fill="none">
+            <animate
+                attributeName="width"
+                attributeType="XML"
+                from="200" to="20"
+                begin="0s" dur="5s"
+                fill="freeze">
+            </animate>
+        </rect>
+    ```
+
+-   多边形和 path 动画
+
+    ```
+        <polygon points="30 30 70 30 90 70 10 70" style="fill:#fcc;stroke:black">
+            <animate
+                attributeName="points"
+                attributeType="XML"
+                to="50 30 70 50 50 90 30 50"
+                begin="0s" dur="5s" fill="freeze"
+            ></animate>
+        </polygon>
+        <path d="M15 50 Q40 15,50 50,65 32,100 40" style="fill:#fcc;stroke:black" transform="translate(0,50)">
+            <animate
+                attributeName="d"
+                attributeType="XML"
+                to="M50 15Q15 40,50 50,32 65,40 100"
+                begin="0s" dur="5s" fill="freeze"
+            ></animate>
+        </path>
+    ```
+
+-   对坐标变换进行过渡
+    ```
+        <rect x="-10" y="-10" width="20" height="20" style="fill:#ff9;          stroke:black">
+            <animateTransform
+                attributeType="XML"
+                attributeName="transform" type="scale"
+                from="1" to="4 2"
+                dur ="3s"
+                begin = "0s" fill="freeze"
+                additive = "sum"
+            ></animateTransform>
+            <animateTransform
+                attributeType="XML"
+                attributeName="transform" type="rotate"
+                from="0" to="90"
+                dur ="3s"
+                begin = "3s" fill="freeze"
+                additive = "sum"
+            ></animateTransform>
+        </rect>
+    ```
+-   沿着 path 运动
+    ```
+        <rect x="-10" y="-10" width="20" height="20" style="fill:#ff9;stroke:black">
+            <animateMotion
+                path="M50,135C100,25 150,225 200,125"
+                dur="6s" fill="freeze" rotate="auto"
+            ></animateMotion>
+        </rect>
+    ```
+-   CSS 处理 SVG 动画 通过选择器设置关键帧
